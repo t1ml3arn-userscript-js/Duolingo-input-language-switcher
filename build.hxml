@@ -3,4 +3,4 @@
 -main Main
 -js bin/out.js
 -dce full
--cmd type "src\script-meta.js" "bin\out.js" > "bin\%__PROJECT_NAME__%.user.js"
+-cmd type "src\script-meta.js" "bin\out.js" > "bin\duolingo-lang-switcher.user.js"
