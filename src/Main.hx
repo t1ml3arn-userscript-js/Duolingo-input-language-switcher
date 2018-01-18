@@ -1,3 +1,6 @@
+package;
+import js.Promise;
+
 class Main {
     static function main() {
         new Main();
@@ -32,16 +35,26 @@ class Main {
     function onready(?e)
     {
         console.log("Duolingo input switcher inited");
-
+        
     }
 
-    function getUserLanguage():String
+    function getUserLanguage():Promise<String>
     {
-        return 'en-en';
+        // query to get data from duolingo,
+        // includes user's lang as"fromLanguage" and
+        // learning lang as "learningLanguage" 
+        // 'https://www.duolingo.com/2017-06-30/users/331083510?fields=adsEnabled,bio,blockedUserIds,canUseModerationTools,courses,creationDate,currentCourse,email,emailAnnouncement,emailAssignment,emailAssignmentComplete,emailClassroomJoin,emailClassroomLeave,emailComment,emailEditSuggested,emailFollow,emailPass,emailWeeklyProgressReport,emailSchoolsAnnouncement,emailStreamPost,emailVerified,emailWeeklyReport,enableMicrophone,enableSoundEffects,enableSpeaker,experiments,facebookId,fromLanguage,globalAmbassadorStatus,googleId,hasPlus,id,joinedClassroomIds,learningLanguage,lingots,location,monthlyXp,name,observedClassroomIds,persistentNotifications,picture,plusDiscounts,practiceReminderSettings,privacySettings,roles,streak,timezone,timezoneOffset,totalXp,trackingProperties,username,webNotificationIds,weeklyXp,xpGains,xpGoal,zhTw,_achievements&_=1516251889761'
+
+        // var request = new haxe.Http('https://www.duolingo.com/?fields=fromLanguage');
+        // to do ?
+        return Promise.resolve('ru');
+        // return 'ru';
     }
 
-    function getForeignLanguage():String
+    function getForeignLanguage():Promise<String>
     {
-        return 'en-en';
+        // to do ?
+        return Promise.resolve('en');
+        // return 'en';
     }
 }
