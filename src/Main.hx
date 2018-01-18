@@ -1,5 +1,6 @@
 package;
 import js.Promise;
+import js.html.*;
 
 class Main {
     static function main() {
@@ -34,8 +35,25 @@ class Main {
 
     function onready(?e)
     {
+        document.removeEventListener('DOMContentLoaded', onready);
         console.log("Duolingo input switcher inited");
-        
+
+        var selector = '._1zuqL';
+        var obsTarget = document.querySelector(selector);
+        if(obsTarget==null)
+        {
+            console.error('There is no Node with selector "$selector" , so nothing to observe ');
+            return;
+        }
+
+        var obsInit = {childList:true, subtree:true};
+        var obs = new MutationObserver(checkMutation);
+        obs.observe(obsTarget, obsInit);
+    }
+
+    function checkMutation(records:Array<MutationRecord>,obs:MutationObserver)
+    {
+        console.log(records);
     }
 
     function getUserLanguage():Promise<String>
