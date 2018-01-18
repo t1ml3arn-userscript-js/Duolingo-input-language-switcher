@@ -1,6 +1,7 @@
 package;
 import js.Promise;
 import js.html.*;
+import js.*;
 
 class Main {
     static function main() {
@@ -9,12 +10,15 @@ class Main {
 
     var console:js.html.Console;
     var document:js.html.Document;
+    var observer:MutationObserver;
+    var isObserved:Bool = false;
+    var ereg:EReg = ~/duolingo.com\/skill|practice/;
 
     function new()
     {
         document = js.Browser.document;
         console = untyped {};
-
+        observer = new MutationObserver(checkMutation);
         // copy original console
         untyped (Object.assign(console, js.Browser.window.console));
 
@@ -38,22 +42,83 @@ class Main {
         document.removeEventListener('DOMContentLoaded', onready);
         console.log("Duolingo input switcher inited");
 
-        var selector = '._1zuqL';
-        var obsTarget = document.querySelector(selector);
+        var t = new haxe.Timer(1000);
+        t.run = checkPage;
+    }
+    
+    function checkPage()
+    {
+        if(ereg.match(Browser.window.location.href))
+        {
+            if(!isObserved)
+                startObserver();
+        }
+        else
+        {
+            isObserved = false;
+            observer.disconnect();
+        }
+    }
+
+    function startObserver(?e)
+    {
+        // var selector = '._1zuqL';
+        var selector = '._1Y5M_';
+        var obsTarget = Browser.document.querySelector(selector);
         if(obsTarget==null)
         {
             console.error('There is no Node with selector "$selector" , so nothing to observe ');
             return;
         }
-
-        var obsInit = {childList:true, subtree:true};
-        var obs = new MutationObserver(checkMutation);
-        obs.observe(obsTarget, obsInit);
+        observer.observe(obsTarget, {childList:true, subtree:true});
+        isObserved=true;
     }
 
-    function checkMutation(records:Array<MutationRecord>,obs:MutationObserver)
+    function checkMutation(?records:Array<MutationRecord>,?obs:MutationObserver)
     {
+        var noAddedNodes = true;
         console.log(records);
+        for(mr in records)
+        {
+            // console.log('Mutation type: ${mr.type}');
+            if(mr.addedNodes.length > 0)
+            {
+                noAddedNodes = false;
+                break;
+            }
+        }
+        if(noAddedNodes)    return;
+        
+        var foreignLang = 'en';
+        var nativeLang = 'ru';
+        var translationInput = Browser.document.querySelector('textarea[data-test=challenge-translate-input]');
+        if(translationInput != null)
+        {
+            var lang = translationInput.getAttribute('lang');
+            if(lang==nativeLang)
+            {
+                console.log('Translation to NATIVE input found');
+            }
+            else if (lang==foreignLang)
+            {
+                console.log('Translation to FOREIGN input found');
+            }
+            return;
+        }
+
+        var listenInput = Browser.document.querySelector('textarea[data-test=challenge-listen-input]');
+        if(listenInput != null)
+        {
+            console.log('Listen input found');
+            return;
+        }
+
+        var nameInput = Browser.document.querySelector('input[data-test=challenge-name-input]');
+        if(nameInput != null)
+        {
+            console.log('Name input found');
+            return;
+        }
     }
 
     function getUserLanguage():Promise<String>
@@ -74,5 +139,19 @@ class Main {
         // to do ?
         return Promise.resolve('en');
         // return 'en';
+    }
+}
+
+@:forward
+abstract Observer(MutationObserver) from MutationObserver to MutationObserver
+{
+    public var target(get,set):Node;
+    inline function get_target():Node return untyped this.target;
+    inline function set_target(v:Node):Node return untyped this.target = v;
+
+    public function observe(t,o)
+    {
+        target = t;
+        this.observe(t,o);
     }
 }
