@@ -31,5 +31,16 @@ class Main {
     function onready(?e)
     {
         console.log("Duolingo input switcher inited");
+
+    }
+
+    function getUserLanguage():String
+    {
+        return 'en-en';
+    }
+
+    function getForeignLanguage():String
+    {
+        return 'en-en';
     }
 }
