@@ -62,63 +62,55 @@ class Main {
 
     function startObserver(?e)
     {
-        // var selector = '._1zuqL';
-        var selector = '._1Y5M_';
+        var selector = '._1zuqL';
         var obsTarget = Browser.document.querySelector(selector);
         if(obsTarget==null)
         {
             console.error('There is no Node with selector "$selector" , so nothing to observe ');
             return;
         }
-        observer.observe(obsTarget, {childList:true, subtree:true});
+        observer.observe(obsTarget, {childList:true, subtree:true, attributes:true});
         isObserved=true;
     }
 
     function checkMutation(?records:Array<MutationRecord>,?obs:MutationObserver)
-    {
-        var noAddedNodes = true;
+    {   
         console.log(records);
-        for(mr in records)
-        {
-            // console.log('Mutation type: ${mr.type}');
-            if(mr.addedNodes.length > 0)
-            {
-                noAddedNodes = false;
-                break;
-            }
-        }
-        if(noAddedNodes)    return;
-        
-        var foreignLang = 'en';
-        var nativeLang = 'ru';
-        var translationInput = Browser.document.querySelector('textarea[data-test=challenge-translate-input]');
-        if(translationInput != null)
-        {
-            var lang = translationInput.getAttribute('lang');
-            if(lang==nativeLang)
-            {
-                console.log('Translation to NATIVE input found');
-            }
-            else if (lang==foreignLang)
-            {
-                console.log('Translation to FOREIGN input found');
-            }
-            return;
-        }
 
-        var listenInput = Browser.document.querySelector('textarea[data-test=challenge-listen-input]');
-        if(listenInput != null)
+        Browser.window.setTimeout(function()
         {
-            console.log('Listen input found');
-            return;
-        }
+            var foreignLang = 'en';
+            var nativeLang = 'ru';
+            var translationInput = Browser.document.querySelector('textarea[data-test=challenge-translate-input]');
+            
+            if(translationInput != null)
+            {
+                var lang = translationInput.getAttribute('lang');
+                if(lang==nativeLang)
+                {
+                    console.log('Translation to NATIVE input found');
+                }
+                else if (lang==foreignLang)
+                {
+                    console.log('Translation to FOREIGN input found');
+                }
+                return;
+            }
 
-        var nameInput = Browser.document.querySelector('input[data-test=challenge-name-input]');
-        if(nameInput != null)
-        {
-            console.log('Name input found');
-            return;
-        }
+            var listenInput = Browser.document.querySelector('textarea[data-test=challenge-listen-input]');
+            if(listenInput != null)
+            {
+                console.log('Listen input found');
+                return;
+            }
+
+            var nameInput = Browser.document.querySelector('input[data-test=challenge-name-input]');
+            if(nameInput != null)
+            {
+                console.log('Name input found');
+                return;
+            }
+        }, 1);
     }
 
     function getUserLanguage():Promise<String>
