@@ -77,40 +77,37 @@ class Main {
     {   
         console.log(records);
 
-        Browser.window.setTimeout(function()
+        var foreignLang = 'en';
+        var nativeLang = 'ru';
+        var translationInput = Browser.document.querySelector('textarea[data-test=challenge-translate-input]');
+        
+        if(translationInput != null)
         {
-            var foreignLang = 'en';
-            var nativeLang = 'ru';
-            var translationInput = Browser.document.querySelector('textarea[data-test=challenge-translate-input]');
-            
-            if(translationInput != null)
+            var lang = translationInput.getAttribute('lang');
+            if(lang==nativeLang)
             {
-                var lang = translationInput.getAttribute('lang');
-                if(lang==nativeLang)
-                {
-                    console.log('Translation to NATIVE input found');
-                }
-                else if (lang==foreignLang)
-                {
-                    console.log('Translation to FOREIGN input found');
-                }
-                return;
+                console.log('Translation to NATIVE input found');
             }
+            else if (lang==foreignLang)
+            {
+                console.log('Translation to FOREIGN input found');
+            }
+            return;
+        }
 
-            var listenInput = Browser.document.querySelector('textarea[data-test=challenge-listen-input]');
-            if(listenInput != null)
-            {
-                console.log('Listen input found');
-                return;
-            }
+        var listenInput = Browser.document.querySelector('textarea[data-test=challenge-listen-input]');
+        if(listenInput != null)
+        {
+            console.log('Listen input found');
+            return;
+        }
 
-            var nameInput = Browser.document.querySelector('input[data-test=challenge-name-input]');
-            if(nameInput != null)
-            {
-                console.log('Name input found');
-                return;
-            }
-        }, 1);
+        var nameInput = Browser.document.querySelector('input[data-test=challenge-name-input]');
+        if(nameInput != null)
+        {
+            console.log('Name input found');
+            return;
+        }
     }
 
     function getUserLanguage():Promise<String>
