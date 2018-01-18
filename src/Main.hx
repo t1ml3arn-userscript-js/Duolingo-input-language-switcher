@@ -13,14 +13,43 @@ class Main {
     var observer:MutationObserver;
     var isObserved:Bool = false;
     var ereg:EReg = ~/duolingo.com\/skill|practice/;
+    var languages:Dynamic;
+    var nativeLanguage:String;
+    var foreignLanguage:String;
+    var targetLanguage:String;
+    var sourceLanguage:String;
+    var originalTrace:Dynamic;
 
     function new()
     {
         document = js.Browser.document;
         console = untyped {};
         observer = new MutationObserver(checkMutation);
+
         // copy original console
         untyped (Object.assign(console, js.Browser.window.console));
+        originalTrace = haxe.Log.trace; 
+        haxe.Log.trace = function(v,?i)console.log('${i.className}:${i.lineNumber} : ', v);
+
+        // don/t forget about numpad coma!
+        languages = {};
+        // languages.ru = 'ё1234567890-=\\йцукенгшщзхъфывапролджэячсмитьбю.Ё!"№;%:?*()_+/ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,,';
+        // languages.en = '`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?.';
+        languages.ru = 'ёйцукенгшщзхъфывапролджэячсмитьбю.ЁЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,';
+        languages.en = '`qwertyuiop[]asdfghjkl;\'zxcvbnm,./~QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?';
+
+        // test
+        var len = languages.ru.length;
+        for(f in Reflect.fields(languages))
+        {
+            var act = Reflect.field(languages, f).length; 
+            if (act != len)
+            {
+                console.error('Language test failed: expected len $len; actual len $act; lang name $f');
+                console.error(Reflect.field(languages, f));
+                return;
+            }
+        }
 
     /*
         run-at states:
@@ -75,38 +104,77 @@ class Main {
 
     function checkMutation(?records:Array<MutationRecord>,?obs:MutationObserver)
     {   
-        console.log(records);
+        // console.log(records);
 
-        var foreignLang = 'en';
-        var nativeLang = 'ru';
+        nativeLanguage = 'ru';
+        foreignLanguage = 'en';
+
         var translationInput = Browser.document.querySelector('textarea[data-test=challenge-translate-input]');
         
         if(translationInput != null)
         {
             var lang = translationInput.getAttribute('lang');
-            if(lang==nativeLang)
+            if(lang==nativeLanguage)
             {
-                console.log('Translation to NATIVE input found');
+                // console.log('Translation to NATIVE input found');
+                targetLanguage = 'ru';
+                sourceLanguage = 'en';
             }
-            else if (lang==foreignLang)
+            else if (lang==foreignLanguage)
             {
-                console.log('Translation to FOREIGN input found');
+                // console.log('Translation to FOREIGN input found');
+                targetLanguage = 'en';
+                sourceLanguage = 'ru';
             }
+            
+            // order of events
+            // keydown
+            // keypress
+            // input
+            translationInput.addEventListener('keypress',onInput);
             return;
         }
 
         var listenInput = Browser.document.querySelector('textarea[data-test=challenge-listen-input]');
         if(listenInput != null)
         {
-            console.log('Listen input found');
+            // console.log('Listen input found');
+            targetLanguage = 'en';
+            sourceLanguage = 'ru';
+            listenInput.addEventListener('keypress',onInput);
             return;
         }
 
         var nameInput = Browser.document.querySelector('input[data-test=challenge-name-input]');
         if(nameInput != null)
         {
-            console.log('Name input found');
+            // console.log('Name input found');
+            targetLanguage = 'en';
+            sourceLanguage = 'ru';
+            nameInput.addEventListener('keydown',onInput);
             return;
+        }
+    }
+
+    function onInput(e:KeyboardEvent)
+    {
+        console.log(e.type, e.key,e.keyCode,e.charCode,untyped e.code);
+        
+        var target:String = cast Reflect.field(languages, targetLanguage);
+        var source:String = cast Reflect.field(languages, sourceLanguage);
+
+        // current symbol is TARGET language - do nothing
+        if(target.indexOf(e.key)!=-1)
+            return;
+        var sourceInd = source.indexOf(e.key);
+        if (sourceInd!=-1)
+        {
+            // current symbol is in source, need to translate
+            var input:Element = cast e.currentTarget;
+            var targetChar = target.charAt(sourceInd);
+            e.preventDefault();
+            untyped input.value += targetChar;
+            // trace('replace ${e.key} on ${targetChar}');
         }
     }
 
