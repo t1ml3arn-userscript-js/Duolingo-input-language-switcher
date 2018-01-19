@@ -158,24 +158,96 @@ class Main {
 
     function onInput(e:KeyboardEvent)
     {
+        ///TODO почему-то съедается последний символ или даже последнее слово
+        // Т.к. событие "отменено", оно не доходит(?) до нормального обработчика
+        // Аналогичная ситуация с пробелом - пока не нажать пробел, не будет кнопки
+        // ОТПРАВИТЬ
+
         console.log(e.type, e.key,e.keyCode,e.charCode,untyped e.code);
         
-        var target:String = cast Reflect.field(languages, targetLanguage);
-        var source:String = cast Reflect.field(languages, sourceLanguage);
+        var targetLangStr:String = cast Reflect.field(languages, targetLanguage);
+        var sourceLangStr:String = cast Reflect.field(languages, sourceLanguage);
 
         // current symbol is TARGET language - do nothing
-        if(target.indexOf(e.key)!=-1)
-            return;
-        var sourceInd = source.indexOf(e.key);
+        // if(target.indexOf(e.key)!=-1)
+        //     return;
+        
+        var sourceInd = sourceLangStr.indexOf(e.key);
         if (sourceInd!=-1)
         {
             // current symbol is in source, need to translate
-            var input:Element = cast e.currentTarget;
-            var targetChar = target.charAt(sourceInd);
+            
+            /* if(e.currentTarget==e.target)
+            {
+                var targetChar = targetLangStr.charAt(sourceInd);
+                var init = {
+                    "key": targetChar,
+                    "code": untyped e.code,
+                    "location": e.location,
+                    "ctrlKey": e.ctrlKey,
+                    "shiftKey": e.shiftKey,
+                    "altKey": e.altKey,
+                    "metaKey": e.metaKey,
+                    "repeat": e.repeat,
+                    "isComposing": e.isComposing,
+                    "charCode": e.charCode,
+                    "keyCode": e.keyCode,
+                    "which": e.which,
+                    "bubbles": e.bubbles,
+                    "cancelable": e.cancelable,
+                    "composed": untyped e.composed
+                    };
+                var newEvent = new KeyboardEvent('keypress', cast init);
             e.preventDefault();
-            untyped input.value += targetChar;
+                var input:Dynamic = e.currentTarget;
+                // trace('caretpos: ${input.selectionStart}');
+                Browser.window.setTimeout(replaceChar,1, input,targetChar,input.selectionStart);
+                // e.stopImmediatePropagation();
+                e.currentTarget.dispatchEvent(newEvent);
+            } */
+            
+            var targetChar = targetLangStr.charAt(sourceInd);
+            var input:Dynamic = e.currentTarget;
+            // trace('caretpos: ${input.selectionStart}');
+            Browser.window.setTimeout(replaceChar,1, input,targetChar,input.selectionStart);
+            return;
+
+            // e.preventDefault();
+            
+            // var targetChar = targetLangStr.charAt(sourceInd);
+            // var input:Dynamic = e.currentTarget;
+            // var start = input.selectionStart;
+            // var end = input.selectionEnd;
+            // var value:String = input.value;
+            // var dir = input.selectionDirection;
+            // if(start==value.length)
+            //     value+=targetChar;
+            // else
+            // {
+            //     if(dir=='backward')
+            //     {
+            //         start = input.selectionEnd;
+            //         end = input.selectionStart;
+            //     }
+            //     value = value.substring(0, start)+targetChar+value.substr(end);
+            // }
+            // input.innerText = value;
+            // input.value = value;
+            // input.setSelectionRange(start+1,start+1);
+            
             // trace('replace ${e.key} on ${targetChar}');
+            // trace('new value: ${input.value}');
         }
+        }
+
+    function replaceChar(target:TextAreaElement, newChar:String, position)
+    {
+        // position--;
+        var val = target.value;
+        val = val.substring(0, position)+newChar+val.substr(position+1);
+        target.innerText = val; 
+        target.value = val;
+        target.setSelectionRange(position+1,position+1);
     }
 
     function getUserLanguage():Promise<String>
