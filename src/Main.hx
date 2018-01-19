@@ -104,6 +104,9 @@ class Main {
 
     function checkMutation(?records:Array<MutationRecord>,?obs:MutationObserver)
     {   
+        ///TODO Можно заменить мутации на обычный инпут =\
+        // т.е. body слушает инпут 
+
         // console.log(records);
 
         nativeLanguage = 'ru';
@@ -132,22 +135,10 @@ class Main {
             // keypress
             // input
             translationInput.addEventListener('keypress',onInput);
-            translationInput.addEventListener('keydown', function(e:KeyboardEvent){
+            translationInput.addEventListener('keydown', function(e:KeyboardEvent)
+            {
                 if(e.keyCode==13)
-                {
-                    untyped e.currentTarget.blur();
-                    // trace('enter pressed');
-                    // trace('value: ${untyped e.currentTarget.value}');
-                    // trace('value(att): ${untyped e.currentTarget.getAttribute("value")}');
-                    // if(e.target==e.currentTarget)
-                    // {
-                    //     var target:TextAreaElement = cast e.currentTarget.;
-                    //     target.blur();
-                    //     var val = target.value;
-                    //     target.value+=' ';
-                    //     target.value=val;
-                    // }
-                }
+                    untyped e.currentTarget.focus();
             });
             return;
         }
@@ -174,7 +165,7 @@ class Main {
     }
 
     function onInput(e:KeyboardEvent)
-    {
+    {    
         ///TODO почему-то съедается последний символ или даже последнее слово
         // Т.к. событие "отменено", оно не доходит(?) до нормального обработчика
         // Аналогичная ситуация с пробелом - пока не нажать пробел, не будет кнопки
@@ -184,78 +175,18 @@ class Main {
         
         var targetLangStr:String = cast Reflect.field(languages, targetLanguage);
         var sourceLangStr:String = cast Reflect.field(languages, sourceLanguage);
-
-        // current symbol is TARGET language - do nothing
-        // if(target.indexOf(e.key)!=-1)
-        //     return;
         
         var sourceInd = sourceLangStr.indexOf(e.key);
         if (sourceInd!=-1)
         {
             // current symbol is in source, need to translate
             
-            /* if(e.currentTarget==e.target)
-            {
-                var targetChar = targetLangStr.charAt(sourceInd);
-                var init = {
-                    "key": targetChar,
-                    "code": untyped e.code,
-                    "location": e.location,
-                    "ctrlKey": e.ctrlKey,
-                    "shiftKey": e.shiftKey,
-                    "altKey": e.altKey,
-                    "metaKey": e.metaKey,
-                    "repeat": e.repeat,
-                    "isComposing": e.isComposing,
-                    "charCode": e.charCode,
-                    "keyCode": e.keyCode,
-                    "which": e.which,
-                    "bubbles": e.bubbles,
-                    "cancelable": e.cancelable,
-                    "composed": untyped e.composed
-                    };
-                var newEvent = new KeyboardEvent('keypress', cast init);
-            e.preventDefault();
-                var input:Dynamic = e.currentTarget;
-                // trace('caretpos: ${input.selectionStart}');
-                Browser.window.setTimeout(replaceChar,1, input,targetChar,input.selectionStart);
-                // e.stopImmediatePropagation();
-                e.currentTarget.dispatchEvent(newEvent);
-            } */
-            
             var targetChar = targetLangStr.charAt(sourceInd);
             var input:Dynamic = e.currentTarget;
             // trace('caretpos: ${input.selectionStart}');
             Browser.window.setTimeout(replaceChar,1, input,targetChar,input.selectionStart);
-            return;
-
-            // e.preventDefault();
-            
-            // var targetChar = targetLangStr.charAt(sourceInd);
-            // var input:Dynamic = e.currentTarget;
-            // var start = input.selectionStart;
-            // var end = input.selectionEnd;
-            // var value:String = input.value;
-            // var dir = input.selectionDirection;
-            // if(start==value.length)
-            //     value+=targetChar;
-            // else
-            // {
-            //     if(dir=='backward')
-            //     {
-            //         start = input.selectionEnd;
-            //         end = input.selectionStart;
-            //     }
-            //     value = value.substring(0, start)+targetChar+value.substr(end);
-            // }
-            // input.innerText = value;
-            // input.value = value;
-            // input.setSelectionRange(start+1,start+1);
-            
-            // trace('replace ${e.key} on ${targetChar}');
-            // trace('new value: ${input.value}');
         }
-        }
+    }
 
     function replaceChar(target:TextAreaElement, newChar:String, position)
     {
