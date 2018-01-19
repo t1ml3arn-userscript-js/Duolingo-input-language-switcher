@@ -104,7 +104,7 @@ class Main {
 
     function checkMutation(?records:Array<MutationRecord>,?obs:MutationObserver)
     {   
-        ///TODO Можно заменить мутации на обычный инпут =\
+        ///TODO Можно заменить мутации на обычный инпут ?
         // т.е. body слушает инпут 
 
         // console.log(records);
@@ -130,10 +130,7 @@ class Main {
                 sourceLanguage = 'ru';
             }
             
-            // order of events
-            // keydown
-            // keypress
-            // input
+            // order of events: keydown, keypress, input
             translationInput.addEventListener('keypress', onInput);
             translationInput.addEventListener('keydown', refocus);
             return;
@@ -170,11 +167,6 @@ class Main {
 
     function onInput(e:KeyboardEvent)
     {    
-        ///TODO почему-то съедается последний символ или даже последнее слово
-        // Т.к. событие "отменено", оно не доходит(?) до нормального обработчика
-        // Аналогичная ситуация с пробелом - пока не нажать пробел, не будет кнопки
-        // ОТПРАВИТЬ
-
         console.log(e.type, e.key,e.keyCode,e.charCode,untyped e.code);
         
         var targetLangStr:String = cast Reflect.field(languages, targetLanguage);
@@ -184,10 +176,8 @@ class Main {
         if (sourceInd!=-1)
         {
             // current symbol is in source, need to translate
-            
             var targetChar = targetLangStr.charAt(sourceInd);
             var input:Dynamic = e.currentTarget;
-            // trace('caretpos: ${input.selectionStart}');
             Browser.window.setTimeout(replaceChar,1, input,targetChar,input.selectionStart);
         }
     }
