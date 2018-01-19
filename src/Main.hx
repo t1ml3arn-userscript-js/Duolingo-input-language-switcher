@@ -208,14 +208,12 @@ class Main {
         // var request = new haxe.Http('https://www.duolingo.com/?fields=fromLanguage');
         // to do ?
         return Promise.resolve('ru');
-        // return 'ru';
     }
 
     function getForeignLanguage():Promise<String>
     {
         // to do ?
         return Promise.resolve('en');
-        // return 'en';
     }
 }
 
