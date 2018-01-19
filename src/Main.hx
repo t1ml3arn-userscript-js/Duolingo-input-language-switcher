@@ -132,6 +132,23 @@ class Main {
             // keypress
             // input
             translationInput.addEventListener('keypress',onInput);
+            translationInput.addEventListener('keydown', function(e:KeyboardEvent){
+                if(e.keyCode==13)
+                {
+                    untyped e.currentTarget.blur();
+                    // trace('enter pressed');
+                    // trace('value: ${untyped e.currentTarget.value}');
+                    // trace('value(att): ${untyped e.currentTarget.getAttribute("value")}');
+                    // if(e.target==e.currentTarget)
+                    // {
+                    //     var target:TextAreaElement = cast e.currentTarget.;
+                    //     target.blur();
+                    //     var val = target.value;
+                    //     target.value+=' ';
+                    //     target.value=val;
+                    // }
+                }
+            });
             return;
         }
 
