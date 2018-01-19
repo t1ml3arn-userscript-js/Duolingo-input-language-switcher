@@ -134,12 +134,8 @@ class Main {
             // keydown
             // keypress
             // input
-            translationInput.addEventListener('keypress',onInput);
-            translationInput.addEventListener('keydown', function(e:KeyboardEvent)
-            {
-                if(e.keyCode==13)
-                    untyped e.currentTarget.focus();
-            });
+            translationInput.addEventListener('keypress', onInput);
+            translationInput.addEventListener('keydown', refocus);
             return;
         }
 
@@ -149,7 +145,8 @@ class Main {
             // console.log('Listen input found');
             targetLanguage = 'en';
             sourceLanguage = 'ru';
-            listenInput.addEventListener('keypress',onInput);
+            listenInput.addEventListener('keypress', onInput);
+            listenInput.addEventListener('keydown', refocus);
             return;
         }
 
@@ -159,9 +156,16 @@ class Main {
             // console.log('Name input found');
             targetLanguage = 'en';
             sourceLanguage = 'ru';
-            nameInput.addEventListener('keydown',onInput);
+            nameInput.addEventListener('keypress',onInput);
+            nameInput.addEventListener('keydown',refocus);
             return;
         }
+    }
+
+    function refocus(?e:KeyboardEvent)
+    {
+        if(e.keyCode==13)
+            untyped e.currentTarget.blur();
     }
 
     function onInput(e:KeyboardEvent)
