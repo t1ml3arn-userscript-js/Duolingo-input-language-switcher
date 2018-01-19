@@ -29,7 +29,7 @@ class Main {
         // copy original console
         untyped (Object.assign(console, js.Browser.window.console));
         originalTrace = haxe.Log.trace; 
-        haxe.Log.trace = function(v,?i)console.log('${i.className}:${i.lineNumber} : ', v);
+        haxe.Log.trace = function(v,?i)console.log('${i.className}:${i.lineNumber}:', v);
 
         // don/t forget about numpad coma!
         languages = {};
