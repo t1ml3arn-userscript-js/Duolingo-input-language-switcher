@@ -225,17 +225,3 @@ class Main {
         return Promise.resolve('en');
     }
 }
-
-@:forward
-abstract Observer(MutationObserver) from MutationObserver to MutationObserver
-{
-    public var target(get,set):Node;
-    inline function get_target():Node return untyped this.target;
-    inline function set_target(v:Node):Node return untyped this.target = v;
-
-    public function observe(t,o)
-    {
-        target = t;
-        this.observe(t,o);
-    }
-}
