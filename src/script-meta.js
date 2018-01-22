@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name Duolingo input switcher
+// @name Duolingo input language switcher
 // @namespace https://www.duolingo.com/IVrL9
 // @match https://www.duolingo.com/*
 // @match https://www.duolingo.com/skill/*
