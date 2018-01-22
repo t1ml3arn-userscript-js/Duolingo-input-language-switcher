@@ -1,7 +1,7 @@
 
 ## Duolingo input language switcher
 
-This script allows you to type letters appropriate for current task without changing keyboard's layout. Includes translation task (to foreign and to native) and listening tasks.
+This script allows you to type letters appropriate for current task without changing keyboard's layout. Includes translation tasks (to foreign and to native) and listening tasks.
 
 ## Limitation
 
