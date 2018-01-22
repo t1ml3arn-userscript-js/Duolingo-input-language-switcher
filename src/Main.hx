@@ -176,7 +176,7 @@ class Main {
 
     function refocus(?e:KeyboardEvent)
     {
-        if(e.keyCode==13)
+        if(e.keyCode==13||untyped e.code == "Enter")
             untyped e.currentTarget.blur();
     }
 
