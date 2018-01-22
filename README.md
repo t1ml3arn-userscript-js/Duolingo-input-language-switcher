@@ -1,10 +1,18 @@
-# Haxe project
 
-This is an example Haxe project to develop Violentmonkey user script
+## Duolingo input language switcher
 
-Without further changes the structure is following:
+This script allows you to type letters appropriate for current task without changing keyboard's layout. Includes translation task (to foreign and to native) and listening tasks.
 
- * `src/Main.hx`: Entry point Haxe source file
- * `src/script-meta.js`: File with metadata block to inject to output userscript js file
- * `build.hxml`: Haxe command line file used to build the project
- * `README.md`: This file
+## Limitation
+
+Currently works for en-ru course. 
+
+## Adding new language pairs
+
+TODO...
+
+## Installation
+
+1. Get one of these [Violentmonkey](https://violentmonkey.github.io/get-it/), [Greasemonkey](https://www.greasespot.net) or [Tampermonkey](https://tampermonkey.net) extension for your browser.
+2. Open the script with [this link](link).
+3. Press Install button or something similar.
