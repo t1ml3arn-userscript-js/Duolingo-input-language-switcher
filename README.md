@@ -14,7 +14,7 @@ TODO...
 ## Installation
 
 1. Get one of these [Violentmonkey](https://violentmonkey.github.io/get-it/), [Greasemonkey](https://www.greasespot.net) or [Tampermonkey](https://tampermonkey.net) extension for your browser.
-2. Open the script with [this link](link).
+2. Open the script from [this link](https://greasyfork.org/ru/scripts/37693-duolingo-input-language-switcher).
 3. Press Install button or something similar.
 
 ## Showcase
