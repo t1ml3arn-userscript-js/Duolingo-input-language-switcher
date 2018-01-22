@@ -185,7 +185,6 @@ class Main {
         console.log(e.type, e.key,e.keyCode,e.charCode,untyped e.code);
         
         var targetLangStr:String = cast Reflect.field(languages, targetLanguage);
-        var sourceLangStr:String = cast Reflect.field(languages, sourceLanguage);
         
         // var sourceInd = sourceLangStr.indexOf(e.key);
         // if (sourceInd!=-1)
