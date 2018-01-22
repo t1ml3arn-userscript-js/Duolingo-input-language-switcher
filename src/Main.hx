@@ -20,12 +20,12 @@ class Main {
     var sourceLanguage:String;
     var originalTrace:Dynamic;
     var keyCodes:Array<String>;
+    var observerTargetSelector:String = '._1zuqL';
 
     function new()
     {
         document = js.Browser.document;
         console = untyped {};
-        observer = new MutationObserver(checkMutation);
 
         // copy original console
         untyped (Object.assign(console, js.Browser.window.console));
@@ -91,29 +91,42 @@ class Main {
     
     function checkPage()
     {
-        if(ereg.test(Browser.window.location.href))
+        var isThatPage = ereg.test(Browser.window.location.href);
+        if(isThatPage)
         {
             if(!isObserved)
                 startObserver();
         }
-        else
+        
+        if (isObserved && (!isThatPage || Browser.document.querySelector(observerTargetSelector)==null))
         {
-            isObserved = false;
-            observer.disconnect();
+            disconnectObserver();
         }
+
+        // trace('tick-tock');
     }
 
     function startObserver(?e)
     {
-        var selector = '._1zuqL';
-        var obsTarget = Browser.document.querySelector(selector);
+        var obsTarget = Browser.document.querySelector(observerTargetSelector);
         if(obsTarget==null)
         {
-            console.error('There is no Node with selector "$selector" , so nothing to observe ');
+            console.error('There is no Node with selector "$observerTargetSelector" , so nothing to observe ');
             return;
         }
+        observer = new MutationObserver(checkMutation);
         observer.observe(obsTarget, {childList:true, subtree:true, attributes:true});
         isObserved=true;
+        // trace('observer connected');
+    }
+
+    function disconnectObserver()
+    {
+        // trace('observer disconected');
+        isObserved=false;
+        if(observer==null)
+            return;
+        observer.disconnect();
     }
 
     function checkMutation(?records:Array<MutationRecord>,?obs:MutationObserver)
@@ -158,6 +171,7 @@ class Main {
             // trace('Name input found');
             initInput(nameInput, 'en', 'ru');
         }
+        // trace('there is no appropriate input field');
     }
 
     function initInput(input:Element, targetLanguage:String, sourceLanguage:String)
