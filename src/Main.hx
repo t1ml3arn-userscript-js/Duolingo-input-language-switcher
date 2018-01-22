@@ -86,8 +86,7 @@ class Main {
         document.removeEventListener('DOMContentLoaded', onready);
         console.log("Duolingo input switcher inited");
 
-        var t = new haxe.Timer(1000);
-        t.run = checkPage;
+        var t = js.Browser.window.setInterval(checkPage, 1000);
     }
     
     function checkPage()
