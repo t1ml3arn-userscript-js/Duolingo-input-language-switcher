@@ -66,11 +66,11 @@ class Main {
         var len:Int = languages.ru.length;
         for(f in Reflect.fields(languages))
         {
-            var act:Int = Reflect.field(languages, f).length; 
+            var act:Int = untyped languages[f].length; 
             if (act != len)
             {
                 console.error('LangString test failed: expected len $len; actual len $act; lang name $f');
-                console.error(Reflect.field(languages, f));
+                console.error(untyped languages[f]);
                 return;
             }
             if(act != keyCodes.length*2)
@@ -184,7 +184,7 @@ class Main {
     {    
         // console.log(e.type, e.key,e.keyCode,e.charCode,untyped e.code);
         
-        var targetLangStr:String = cast Reflect.field(languages, targetLanguage);
+        var targetLangStr:String = untyped languages[targetLanguage];
         
         // var sourceInd = sourceLangStr.indexOf(e.key);
         // if (sourceInd!=-1)
