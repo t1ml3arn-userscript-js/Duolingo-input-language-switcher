@@ -16,3 +16,7 @@ TODO...
 1. Get one of these [Violentmonkey](https://violentmonkey.github.io/get-it/), [Greasemonkey](https://www.greasespot.net) or [Tampermonkey](https://tampermonkey.net) extension for your browser.
 2. Open the script with [this link](link).
 3. Press Install button or something similar.
+
+## Showcase
+
+TODO...
