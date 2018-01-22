@@ -7,7 +7,7 @@
 // @match https://www.example.com/*
 // @match https://example.com/*
 // @version 1.0
-// @description Swithes the letters to match the current task language. Allows you to type correct letters regardless of the keyboard layout
+// @description This script allows you to type letters appropriate for current task without changing keyboard's layout
 // @run-at document-start
 // @grant none
 // ==/UserScript==
