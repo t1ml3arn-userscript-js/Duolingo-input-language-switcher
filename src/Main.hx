@@ -32,6 +32,28 @@ class Main {
         originalTrace = haxe.Log.trace; 
         haxe.Log.trace = function(v,?i)console.log('${i.className}:${i.lineNumber}:', v);
 
+        
+
+    /*
+        run-at states:
+
+        document_start == Document.readyState is "loading" == ... ?
+        document_end == Document.readyState is "interactive" == "DOMContentLoaded" event fired
+        document_idle == Document.readyState is "complete" == document "load" event fired
+
+    */
+
+        if(document.readyState == 'interactive' || document.readyState == 'complete')
+            onready();
+        else
+            document.addEventListener('DOMContentLoaded', onready);
+    }
+
+    function initLanguages()
+    {
+        // code to build array of key codes
+        // https://jsfiddle.net/efc0nj5f/
+
         // all possible key code values
         keyCodes = ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', 'Backslash', 'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft', 'BracketRight', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote', 'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period', 'Slash'];
 
@@ -57,20 +79,6 @@ class Main {
                 return;
             }
         }
-
-    /*
-        run-at states:
-
-        document_start == Document.readyState is "loading" == ... ?
-        document_end == Document.readyState is "interactive" == "DOMContentLoaded" event fired
-        document_idle == Document.readyState is "complete" == document "load" event fired
-
-    */
-
-        if(document.readyState == 'interactive' || document.readyState == 'complete')
-            onready();
-        else
-            document.addEventListener('DOMContentLoaded', onready);
     }
 
     function onready(?e)
