@@ -19,6 +19,7 @@ class Main {
     var targetLanguage:String;
     var sourceLanguage:String;
     var originalTrace:Dynamic;
+    var keyCodes:Array<String>;
 
     function new()
     {
@@ -31,22 +32,28 @@ class Main {
         originalTrace = haxe.Log.trace; 
         haxe.Log.trace = function(v,?i)console.log('${i.className}:${i.lineNumber}:', v);
 
+        // all possible key code values
+        keyCodes = ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', 'Backslash', 'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeft', 'BracketRight', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote', 'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period', 'Slash'];
+
         // don/t forget about numpad coma!
         languages = {};
-        // languages.ru = 'ё1234567890-=\\йцукенгшщзхъфывапролджэячсмитьбю.Ё!"№;%:?*()_+/ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,,';
-        // languages.en = '`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?.';
-        languages.ru = 'ёйцукенгшщзхъфывапролджэячсмитьбю.ЁЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,';
-        languages.en = '`qwertyuiop[]asdfghjkl;\'zxcvbnm,./~QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?';
+        languages.ru = 'ё1234567890-=\\йцукенгшщзхъфывапролджэячсмитьбю.Ё!"№;%:?*()_+/ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,';
+        languages.en = '`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?';
 
         // test
-        var len = languages.ru.length;
+        var len:Int = languages.ru.length;
         for(f in Reflect.fields(languages))
         {
-            var act = Reflect.field(languages, f).length; 
+            var act:Int = Reflect.field(languages, f).length; 
             if (act != len)
             {
-                console.error('Language test failed: expected len $len; actual len $act; lang name $f');
+                console.error('LangString test failed: expected len $len; actual len $act; lang name $f');
                 console.error(Reflect.field(languages, f));
+                return;
+            }
+            if(act != keyCodes.length*2)
+            {
+                console.error('KeyCodes and LangString test failed: expected lang string len ${keyCodes.length*2}; actual len $act; lang name $f');
                 return;
             }
         }
