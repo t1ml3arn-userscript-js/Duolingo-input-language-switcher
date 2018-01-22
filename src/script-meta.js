@@ -10,4 +10,5 @@
 // @description This script allows you to type letters appropriate for current task without changing keyboard's layout
 // @run-at document-start
 // @grant none
+// @license GPLv3
 // ==/UserScript==
