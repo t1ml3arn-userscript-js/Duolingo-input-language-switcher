@@ -122,7 +122,7 @@ class Main {
         ///TODO Можно заменить мутации на обычный инпут ?
         // т.е. body слушает инпут 
 
-        // console.log(records);
+        // trace(records);
 
         nativeLanguage = 'ru';
         foreignLanguage = 'en';
@@ -134,13 +134,13 @@ class Main {
             var lang = translationInput.getAttribute('lang');
             if(lang==nativeLanguage)
             {
-                // console.log('Translation to NATIVE input found');
+                // trace('Translation to NATIVE input found');
                 targetLanguage = 'ru';
                 sourceLanguage = 'en';
             }
             else if (lang==foreignLanguage)
             {
-                // console.log('Translation to FOREIGN input found');
+                // trace('Translation to FOREIGN input found');
                 targetLanguage = 'en';
                 sourceLanguage = 'ru';
             }
@@ -154,7 +154,7 @@ class Main {
         var listenInput = Browser.document.querySelector('textarea[data-test=challenge-listen-input]');
         if(listenInput != null)
         {
-            // console.log('Listen input found');
+            // trace('Listen input found');
             targetLanguage = 'en';
             sourceLanguage = 'ru';
             listenInput.addEventListener('keypress', onInput);
@@ -165,7 +165,7 @@ class Main {
         var nameInput = Browser.document.querySelector('input[data-test=challenge-name-input]');
         if(nameInput != null)
         {
-            // console.log('Name input found');
+            // trace('Name input found');
             targetLanguage = 'en';
             sourceLanguage = 'ru';
             nameInput.addEventListener('keypress',onInput);
@@ -182,7 +182,7 @@ class Main {
 
     function onInput(e:KeyboardEvent)
     {    
-        console.log(e.type, e.key,e.keyCode,e.charCode,untyped e.code);
+        // console.log(e.type, e.key,e.keyCode,e.charCode,untyped e.code);
         
         var targetLangStr:String = cast Reflect.field(languages, targetLanguage);
         
