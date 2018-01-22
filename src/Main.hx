@@ -134,19 +134,13 @@ class Main {
             if(lang==nativeLanguage)
             {
                 // trace('Translation to NATIVE input found');
-                targetLanguage = 'ru';
-                sourceLanguage = 'en';
+                initInput(translationInput, 'ru', 'en');
             }
             else if (lang==foreignLanguage)
             {
                 // trace('Translation to FOREIGN input found');
-                targetLanguage = 'en';
-                sourceLanguage = 'ru';
+                initInput(translationInput, 'en', 'ru');
             }
-            
-            // order of events: keydown, keypress, input
-            translationInput.addEventListener('keypress', onInput);
-            translationInput.addEventListener('keydown', refocus);
             return;
         }
 
@@ -154,10 +148,7 @@ class Main {
         if(listenInput != null)
         {
             // trace('Listen input found');
-            targetLanguage = 'en';
-            sourceLanguage = 'ru';
-            listenInput.addEventListener('keypress', onInput);
-            listenInput.addEventListener('keydown', refocus);
+            initInput(listenInput, 'en', 'ru');
             return;
         }
 
@@ -165,12 +156,16 @@ class Main {
         if(nameInput != null)
         {
             // trace('Name input found');
-            targetLanguage = 'en';
-            sourceLanguage = 'ru';
-            nameInput.addEventListener('keypress',onInput);
-            nameInput.addEventListener('keydown',refocus);
-            return;
+            initInput(nameInput, 'en', 'ru');
         }
+    }
+
+    function initInput(input:Element, targetLanguage:String, sourceLanguage:String)
+    {
+        this.targetLanguage = targetLanguage;
+        this.sourceLanguage = sourceLanguage;
+        input.addEventListener('keypress',onInput);
+        input.addEventListener('keydown',refocus);
     }
 
     function refocus(?e:KeyboardEvent)
