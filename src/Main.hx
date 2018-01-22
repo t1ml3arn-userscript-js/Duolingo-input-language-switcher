@@ -201,7 +201,6 @@ class Main {
 
     function replaceChar(target:TextAreaElement, newChar:String, position)
     {
-        // position--;
         var val = target.value;
         val = val.substring(0, position)+newChar+val.substr(position+1);
         target.innerText = val; 
