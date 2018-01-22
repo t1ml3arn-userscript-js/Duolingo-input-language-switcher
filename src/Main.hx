@@ -12,7 +12,7 @@ class Main {
     var document:js.html.Document;
     var observer:MutationObserver;
     var isObserved:Bool = false;
-    var ereg:EReg = ~/duolingo.com\/skill|practice/;
+    var ereg:js.RegExp = new js.RegExp('duolingo\\.com/skill|practice/');
     var languages:Dynamic;
     var nativeLanguage:String;
     var foreignLanguage:String;
@@ -33,7 +33,7 @@ class Main {
         haxe.Log.trace = function(v,?i)console.log('${i.className}:${i.lineNumber}:', v);
 
         initLanguages();
-
+        
     /*
         run-at states:
 
@@ -92,7 +92,7 @@ class Main {
     
     function checkPage()
     {
-        if(ereg.match(Browser.window.location.href))
+        if(ereg.test(Browser.window.location.href))
         {
             if(!isObserved)
                 startObserver();
