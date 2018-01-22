@@ -187,11 +187,13 @@ class Main {
         var targetLangStr:String = cast Reflect.field(languages, targetLanguage);
         var sourceLangStr:String = cast Reflect.field(languages, sourceLanguage);
         
-        var sourceInd = sourceLangStr.indexOf(e.key);
-        if (sourceInd!=-1)
+        // var sourceInd = sourceLangStr.indexOf(e.key);
+        // if (sourceInd!=-1)
+        var keyCodeInd = keyCodes.indexOf(untyped e.code);
+        if(keyCodeInd != -1)
         {
             // current symbol is in source, need to translate
-            var targetChar = targetLangStr.charAt(sourceInd);
+            var targetChar = e.shiftKey ? targetLangStr.charAt(keyCodeInd+keyCodes.length) : targetLangStr.charAt(keyCodeInd);
             var input:Dynamic = e.currentTarget;
             Browser.window.setTimeout(replaceChar,1, input,targetChar,input.selectionStart);
         }
