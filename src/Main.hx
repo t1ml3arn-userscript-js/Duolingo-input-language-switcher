@@ -32,7 +32,7 @@ class Main {
         originalTrace = haxe.Log.trace; 
         haxe.Log.trace = function(v,?i)console.log('${i.className}:${i.lineNumber}:', v);
 
-        
+        initLanguages();
 
     /*
         run-at states:
