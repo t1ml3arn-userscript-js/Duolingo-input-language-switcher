@@ -6,7 +6,7 @@
 // @match https://www.duolingo.com/practice/*
 // @match https://www.example.com/*
 // @match https://example.com/*
-// @version 1.0
+// @version 1.1.1
 // @description This script allows you to type letters appropriate for current task without changing keyboard's layout
 // @run-at document-start
 // @grant none
@@ -28,12 +28,12 @@ HxOverrides.substr = function(s,pos,len) {
 	return s.substr(pos,len);
 };
 var Main = function() {
+	this.observerTargetSelector = "._1zuqL";
 	this.ereg = new RegExp("duolingo\\.com/skill|practice/");
 	this.isObserved = false;
 	var _gthis = this;
 	this.document = window.document;
 	this.console = { };
-	this.observer = new MutationObserver($bind(this,this.checkMutation));
 	Object.assign(this.console,window.console);
 	this.originalTrace = haxe_Log.trace;
 	haxe_Log.trace = function(v,i) {
@@ -80,24 +80,32 @@ Main.prototype = {
 		window.setInterval($bind(this,this.checkPage),1000);
 	}
 	,checkPage: function() {
-		if(this.ereg.test(window.location.href)) {
+		var isThatPage = this.ereg.test(window.location.href);
+		if(isThatPage) {
 			if(!this.isObserved) {
 				this.startObserver();
 			}
-		} else {
-			this.isObserved = false;
-			this.observer.disconnect();
+		}
+		if(this.isObserved && (!isThatPage || window.document.querySelector(this.observerTargetSelector) == null)) {
+			this.disconnectObserver();
 		}
 	}
 	,startObserver: function(e) {
-		var selector = "._1zuqL";
-		var obsTarget = window.document.querySelector(selector);
+		var obsTarget = window.document.querySelector(this.observerTargetSelector);
 		if(obsTarget == null) {
-			this.console.error("There is no Node with selector \"" + selector + "\" , so nothing to observe ");
+			this.console.error("There is no Node with selector \"" + this.observerTargetSelector + "\" , so nothing to observe ");
 			return;
 		}
+		this.observer = new MutationObserver($bind(this,this.checkMutation));
 		this.observer.observe(obsTarget,{ childList : true, subtree : true, attributes : true});
 		this.isObserved = true;
+	}
+	,disconnectObserver: function() {
+		this.isObserved = false;
+		if(this.observer == null) {
+			return;
+		}
+		this.observer.disconnect();
 	}
 	,checkMutation: function(records,obs) {
 		this.nativeLanguage = "ru";
