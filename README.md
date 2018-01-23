@@ -17,6 +17,10 @@ TODO...
 2. Open the script from [this link](https://greasyfork.org/ru/scripts/37693-duolingo-input-language-switcher).
 3. Press Install button or something similar.
 
-## Showcase
+## Compilation
 
-TODO...
+1. Install Haxe (3.4 will do)
+2. `cd` to project folder
+3.  Run `build.hxml` file  
+
+Why Haxe? Because I can.
