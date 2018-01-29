@@ -192,6 +192,9 @@ class Main {
     {    
         // console.log(e.type, e.key,e.keyCode,e.charCode,untyped e.code);
         
+        //TODO skip all non-printable combinations
+        // like ctrl+A and so on
+
         var targetLangStr:String = untyped languages[targetLanguage];
         
         // var sourceInd = sourceLangStr.indexOf(e.key);
