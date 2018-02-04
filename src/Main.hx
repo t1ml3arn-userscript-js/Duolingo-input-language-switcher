@@ -12,7 +12,7 @@ class Main {
     var document:js.html.Document;
     var observer:MutationObserver;
     var isObserved:Bool = false;
-    var ereg:js.RegExp = new js.RegExp('duolingo\\.com/skill|practice/');
+    var ereg:js.RegExp = new js.RegExp('duolingo\\.com/skill|practice');
     var languages:Dynamic;
     var nativeLanguage:String;
     var foreignLanguage:String;
