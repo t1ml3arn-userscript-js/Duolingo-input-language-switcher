@@ -9,4 +9,6 @@
 // @run-at document-start
 // @grant none
 // @license GPLv3
+// @homepageURL https://github.com/T1mL3arn/Duolingo-input-language-switcher
+// @supportURL https://greasyfork.org/en/scripts/37693-duolingo-input-language-switcher/feedback
 // ==/UserScript==
