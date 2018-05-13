@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name Duolingo input language switcher
 // @namespace https://www.duolingo.com/IVrL9
+// @author T1mL3arn
 // @match https://www.duolingo.com/*
 // @match https://www.example.com/*
 // @match https://example.com/*
-// @version 1.1.2
+// @version 1.1.3
 // @description This script allows you to type letters appropriate for current task without changing keyboard's layout
 // @run-at document-start
 // @grant none
