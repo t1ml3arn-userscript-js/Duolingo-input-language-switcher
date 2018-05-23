@@ -23,11 +23,13 @@ class Main {
         document = js.Browser.document;
         console = untyped {};
 
+        #if debug
         // copy original console
         untyped (Object.assign(console, js.Browser.window.console));
         originalTrace = haxe.Log.trace; 
         haxe.Log.trace = function(v,?i)console.log('${i.className}:${i.lineNumber}:', v);
-
+        #end
+        
         initLanguages();
         
     /*
