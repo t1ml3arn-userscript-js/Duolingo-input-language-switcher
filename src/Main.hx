@@ -10,9 +10,6 @@ class Main {
 
     var console:js.html.Console;
     var document:js.html.Document;
-    var observer:MutationObserver;
-    var isObserved:Bool = false;
-    var ereg:js.RegExp = new js.RegExp('duolingo\\.com/skill|practice');
     var languages:Dynamic;
     var nativeLanguage:String;
     var foreignLanguage:String;
@@ -20,7 +17,6 @@ class Main {
     var sourceLanguage:String;
     var originalTrace:Dynamic;
     var keyCodes:Array<String>;
-    var observerTargetSelector:String = '._1zuqL';
 
     function new()
     {
@@ -84,129 +80,79 @@ class Main {
     function onready(?e)
     {
         document.removeEventListener('DOMContentLoaded', onready);
-        console.log("Duolingo input switcher inited");
+        console.log("Duolingo input switcher is ready");
 
-        var t = js.Browser.window.setInterval(checkPage, 1000);
-    }
-    
-    function checkPage()
-    {
-        var isThatPage = ereg.test(Browser.window.location.href);
-        if(isThatPage)
-        {
-            if(!isObserved)
-                startObserver();
-        }
-        
-        if (isObserved && (!isThatPage || Browser.document.querySelector(observerTargetSelector)==null))
-        {
-            disconnectObserver();
-        }
+        ///TODO fix BUG - если печатать сразу после загрузки страницы, есть шанс что первые неск-ко символов не будет обработаны
+        // выявлено для перевода с англ на ру
 
-        // trace('tick-tock');
-    }
-
-    function startObserver(?e)
-    {
-        var obsTarget = Browser.document.querySelector(observerTargetSelector);
-        if(obsTarget==null)
-        {
-            console.error('There is no Node with selector "$observerTargetSelector" , so nothing to observe ');
-            return;
-        }
-        observer = new MutationObserver(checkMutation);
-        observer.observe(obsTarget, {childList:true, subtree:true, attributes:true});
-        isObserved=true;
-        // trace('observer connected');
-    }
-
-    function disconnectObserver()
-    {
-        // trace('observer disconected');
-        isObserved=false;
-        if(observer==null)
-            return;
-        observer.disconnect();
-    }
-
-    function checkMutation(?records:Array<MutationRecord>,?obs:MutationObserver)
-    {   
         ///TODO Можно заменить мутации на обычный инпут ?
         // т.е. body слушает инпут 
 
-        // trace(records);
-
-        nativeLanguage = 'ru';
-        foreignLanguage = 'en';
-
-        var translationInput = Browser.document.querySelector('textarea[data-test=challenge-translate-input]');
-        
-        if(translationInput != null)
-        {
-            var lang = translationInput.getAttribute('lang');
-            if(lang==nativeLanguage)
-            {
-                // trace('Translation to NATIVE input found');
-                initInput(translationInput, 'ru', 'en');
-            }
-            else if (lang==foreignLanguage)
-            {
-                // trace('Translation to FOREIGN input found');
-                initInput(translationInput, 'en', 'ru');
-            }
-            return;
-        }
-
-        var listenInput = Browser.document.querySelector('textarea[data-test=challenge-listen-input]');
-        if(listenInput != null)
-        {
-            // trace('Listen input found');
-            initInput(listenInput, 'en', 'ru');
-            return;
-        }
-
-        var nameInput = Browser.document.querySelector('input[data-test=challenge-name-input]');
-        if(nameInput != null)
-        {
-            // trace('Name input found');
-            initInput(nameInput, 'en', 'ru');
-        }
-        // trace('there is no appropriate input field');
+        Browser.document.body.addEventListener('keypress', onKeyPress);
+        Browser.document.body.addEventListener('keydown', refocus);
     }
-
-    function initInput(input:Element, targetLanguage:String, sourceLanguage:String)
+    
+    function onKeyPress(e:KeyboardEvent)
     {
-        this.targetLanguage = targetLanguage;
-        this.sourceLanguage = sourceLanguage;
-        input.addEventListener('keypress',onInput);
-        input.addEventListener('keydown',refocus);
-    }
-
-    function refocus(?e:KeyboardEvent)
-    {
-        if(e.keyCode==13||untyped e.code == "Enter")
-            untyped e.currentTarget.blur();
-    }
-
-    function onInput(e:KeyboardEvent)
-    {    
-        // console.log(e.type, e.key,e.keyCode,e.charCode,untyped e.code);
-        
         if(e.ctrlKey)
             return;
-
-        var targetLangStr:String = untyped languages[targetLanguage];
-        
-        // var sourceInd = sourceLangStr.indexOf(e.key);
-        // if (sourceInd!=-1)
-        var keyCodeInd = keyCodes.indexOf(untyped e.code);
-        if(keyCodeInd != -1)
+            
+        var sourceElt:Element = cast e.target;
+        if(isInput(sourceElt))
         {
-            // current symbol is in source, need to translate
-            var targetChar = e.shiftKey ? targetLangStr.charAt(keyCodeInd+keyCodes.length) : targetLangStr.charAt(keyCodeInd);
-            var input:Dynamic = e.currentTarget;
-            Browser.window.setTimeout(replaceChar,1, input,targetChar,input.selectionStart);
+            if(sourceElt.dataset.test == 'challenge-translate-input')
+            {
+                nativeLanguage = 'ru';
+                foreignLanguage = 'en';
+                
+                var lang = sourceElt.getAttribute('lang');
+                if(lang==nativeLanguage)
+                {
+                    // trace('Translation to NATIVE input found');
+                    setLanguagePair('ru', 'en');
+                }
+                else if (lang==foreignLanguage)
+                {
+                    // trace('Translation to FOREIGN input found');
+                    setLanguagePair('en', 'ru');
+                }
+            }
+            else if (sourceElt.dataset.test == 'challenge-listen-input' || sourceElt.dataset.test == 'challenge-name-input')
+            {
+                // trace('Listen or name input found');
+                setLanguagePair('en', 'ru');
+            }
+            else    return;
+
+            var targetLangStr:String = untyped languages[targetLanguage];
+            
+            var keyCodeInd = keyCodes.indexOf(untyped e.code);
+            if(keyCodeInd != -1)
+            {
+                // current symbol is in source, need to translate
+                var targetChar = e.shiftKey ? targetLangStr.charAt(keyCodeInd+keyCodes.length) : targetLangStr.charAt(keyCodeInd);
+                var input:Dynamic = sourceElt;
+                Browser.window.setTimeout(replaceChar,1, input,targetChar,input.selectionStart);
+            }
         }
+    }
+
+    function isInput(elt:Element):Bool
+    {
+        return elt.tagName == 'TEXTAREA' || (elt.tagName == 'INPUT' && elt.getAttribute('type') == 'text');
+    }
+
+    function setLanguagePair(target:String, source:String)
+    {
+        this.targetLanguage = target;
+        this.sourceLanguage = source;
+    }
+
+    function refocus(e:KeyboardEvent)
+    {
+        if(isInput(cast e.target))
+        if(e.keyCode==13||untyped e.code == "Enter")
+            untyped e.target.blur();
     }
 
     function replaceChar(target:TextAreaElement, newChar:String, position)
