@@ -82,12 +82,6 @@ class Main {
         document.removeEventListener('DOMContentLoaded', onready);
         console.log("Duolingo input switcher is ready");
 
-        ///TODO fix BUG - если печатать сразу после загрузки страницы, есть шанс что первые неск-ко символов не будет обработаны
-        // выявлено для перевода с англ на ру
-
-        ///TODO Можно заменить мутации на обычный инпут ?
-        // т.е. body слушает инпут 
-
         Browser.document.body.addEventListener('keypress', onKeyPress);
         Browser.document.body.addEventListener('keydown', refocus);
     }
