@@ -84,7 +84,12 @@ Main.prototype = {
 		}
 		var sourceElt = e.target;
 		if(this.isInput(sourceElt)) {
-			if(sourceElt.dataset.test == "challenge-translate-input") {
+			var challengeType = sourceElt.dataset.test;
+			switch(challengeType) {
+			case "challenge-listen-input":case "challenge-listentap-input":case "challenge-name-input":
+				this.setLanguagePair("en","ru");
+				break;
+			case "challenge-translate-input":
 				this.nativeLanguage = "ru";
 				this.foreignLanguage = "en";
 				var lang = sourceElt.getAttribute("lang");
@@ -93,9 +98,8 @@ Main.prototype = {
 				} else if(lang == this.foreignLanguage) {
 					this.setLanguagePair("en","ru");
 				}
-			} else if(sourceElt.dataset.test == "challenge-listen-input" || sourceElt.dataset.test == "challenge-name-input") {
-				this.setLanguagePair("en","ru");
-			} else {
+				break;
+			default:
 				return;
 			}
 			var targetLangStr = this.languages[this.targetLanguage];
