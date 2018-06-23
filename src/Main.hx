@@ -96,30 +96,34 @@ class Main {
         var sourceElt:Element = cast e.target;
         if(isInput(sourceElt))
         {
-            if(sourceElt.dataset.test == 'challenge-translate-input')
+            var challengeType:String = sourceElt.dataset.test;
+            switch (challengeType)
             {
-                nativeLanguage = 'ru';
-                foreignLanguage = 'en';
-                
-                var lang = sourceElt.getAttribute('lang');
-                if(lang==nativeLanguage)
-                {
-                    // trace('Translation to NATIVE input found');
-                    setLanguagePair('ru', 'en');
-                }
-                else if (lang==foreignLanguage)
-                {
-                    // trace('Translation to FOREIGN input found');
-                    setLanguagePair('en', 'ru');
-                }
-            }
-            else if (sourceElt.dataset.test == 'challenge-listen-input' || sourceElt.dataset.test == 'challenge-name-input')
-            {
-                // trace('Listen or name input found');
-                setLanguagePair('en', 'ru');
-            }
-            else    return;
+                case 'challenge-translate-input':
 
+                    nativeLanguage = 'ru';
+                    foreignLanguage = 'en';
+                    
+                    var lang = sourceElt.getAttribute('lang');
+                    if(lang==nativeLanguage)
+                    {
+                        // trace('Translation to NATIVE input found');
+                        setLanguagePair('ru', 'en');
+                    }
+                    else if (lang==foreignLanguage)
+                    {
+                        // trace('Translation to FOREIGN input found');
+                        setLanguagePair('en', 'ru');
+                    }
+
+                case 'challenge-listen-input', 'challenge-name-input', 'challenge-listentap-input':
+
+                    // trace('Listen or name input found');
+                    setLanguagePair('en', 'ru');
+
+                default:    return;
+            }
+            
             var targetLangStr:String = untyped languages[targetLanguage];
             
             var keyCodeInd = keyCodes.indexOf(untyped e.code);
