@@ -5,7 +5,7 @@
 // @match https://www.duolingo.com/*
 // @match https://www.example.com/*
 // @match https://example.com/*
-// @version 1.4.1
+// @version 1.4.2
 // @description This script allows you to type letters appropriate for current task without changing keyboard's layout
 // @run-at document-start
 // @grant none

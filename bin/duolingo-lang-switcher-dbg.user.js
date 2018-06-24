@@ -5,7 +5,7 @@
 // @match https://www.duolingo.com/*
 // @match https://www.example.com/*
 // @match https://example.com/*
-// @version 1.4.1
+// @version 1.4.2
 // @description This script allows you to type letters appropriate for current task without changing keyboard's layout
 // @run-at document-start
 // @grant none
@@ -31,6 +31,7 @@ HxOverrides.substr = function(s,pos,len) {
 var Main = function() {
 	var _gthis = this;
 	this.document = window.document;
+	this.console = window.console;
 	this.console = { };
 	Object.assign(this.console,window.console);
 	this.originalTrace = haxe_Log.trace;
@@ -74,7 +75,7 @@ Main.prototype = {
 	}
 	,onready: function(e) {
 		this.document.removeEventListener("DOMContentLoaded",$bind(this,this.onready));
-		this.console.log("Duolingo input switcher is ready");
+		this.console.log("Duolingo input switcher is ready" + " [ DEBUG MODE ]");
 		window.document.body.addEventListener("keypress",$bind(this,this.onKeyPress));
 		window.document.body.addEventListener("keydown",$bind(this,this.refocus));
 	}
