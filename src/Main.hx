@@ -21,10 +21,11 @@ class Main {
     function new()
     {
         document = js.Browser.document;
-        console = untyped {};
+        console = Browser.console;
 
         #if debug
         // copy original console
+        console = untyped {};
         untyped (Object.assign(console, js.Browser.window.console));
         originalTrace = haxe.Log.trace; 
         haxe.Log.trace = function(v,?i)console.log('${i.className}:${i.lineNumber}:', v);
@@ -82,8 +83,9 @@ class Main {
     function onready(?e)
     {
         document.removeEventListener('DOMContentLoaded', onready);
-        console.log("Duolingo input switcher is ready");
-
+        var mode = #if debug " [ DEBUG MODE ]" #else "" #end;
+        console.log('Duolingo input switcher is ready$mode');
+        
         Browser.document.body.addEventListener('keypress', onKeyPress);
         Browser.document.body.addEventListener('keydown', refocus);
     }
