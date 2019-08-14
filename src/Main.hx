@@ -123,6 +123,10 @@ class Main {
                     // trace('Listen or name input found');
                     setLanguagePair('en', 'ru');
 
+                case 'challenge-text-input':
+
+                    setLanguagePair('en', 'ru');
+
                 default:    return;
             }
             
