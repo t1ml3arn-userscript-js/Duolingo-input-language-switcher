@@ -8,7 +8,7 @@ class Main {
         new Main();
     }
 
-    var console:js.html.Console;
+    var console:ConsoleInstance;
     var document:js.html.Document;
     var languages:Dynamic;
     var nativeLanguage:String;
@@ -27,8 +27,8 @@ class Main {
         // copy original console
         console = untyped {};
         untyped (Object.assign(console, js.Browser.window.console));
-        originalTrace = haxe.Log.trace; 
-        haxe.Log.trace = function(v,?i)console.log('${i.className}:${i.lineNumber}:', v);
+        originalTrace = haxe.Log.trace;
+        haxe.Log.trace = function(v,?i) console.log('${i.className}:${i.lineNumber}:', v);
         #end
         
         initLanguages();
