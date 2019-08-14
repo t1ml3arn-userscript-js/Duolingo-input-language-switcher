@@ -19,7 +19,7 @@ TODO...
 
 ## Compilation
 
-1. Install Haxe (3.4 will do)
+1. Install Haxe 4
 2. `cd` to project folder
 3. Run `build.hxml` file  
 
