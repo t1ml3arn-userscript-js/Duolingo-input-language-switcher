@@ -1,11 +1,11 @@
 
-## Duolingo input language switcher
+# Duolingo input language switcher
 
 This script allows you to type letters appropriate for current task without changing keyboard's layout. Includes translation tasks (to foreign and to native) and listening tasks.
 
 ## Limitation
 
-Currently works for en-ru course. 
+Currently works for en-ru course.
 
 ## Adding new language pairs
 
@@ -21,6 +21,6 @@ TODO...
 
 1. Install Haxe (3.4 will do)
 2. `cd` to project folder
-3.  Run `build.hxml` file  
+3. Run `build.hxml` file  
 
 Why Haxe? Because I can.
