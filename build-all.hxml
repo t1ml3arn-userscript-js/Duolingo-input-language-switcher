@@ -2,6 +2,13 @@
 -D analyzer-optimize
 -main Main
 -dce full
+
+--each
+
+-js bin\out.js
+-cmd type "src\script-meta.js" "bin\out.js" > "bin\duolingo-lang-switcher.user.js"
+
+--next
 -D debug
 -js bin\out-dbg.js
 -cmd type "src\script-meta.js" "bin\out-dbg.js" > "bin\duolingo-lang-switcher-dbg.user.js"
