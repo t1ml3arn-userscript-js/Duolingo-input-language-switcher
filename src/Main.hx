@@ -28,7 +28,10 @@ class Main {
         console = untyped {};
         untyped (Object.assign(console, js.Browser.window.console));
         originalTrace = haxe.Log.trace;
-        haxe.Log.trace = function(v,?i) console.log('${i.className}:${i.lineNumber}:', v);
+        haxe.Log.trace = function(v,?infos) {
+            var out = haxe.Log.formatOutput(v, infos);
+            console.log(out);
+        }
         #end
         
         initLanguages();
