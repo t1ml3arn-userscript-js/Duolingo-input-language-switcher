@@ -165,7 +165,7 @@ class Main {
             untyped e.target.blur();
     }
 
-    function replaceChar(target:TextAreaElement, newChar:String, position)
+    function replaceChar(target:InputElement, newChar:String, position)
     {
         var val = target.value;
         val = val.substring(0, position)+newChar+val.substr(position+1);
