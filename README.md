@@ -21,4 +21,5 @@ TODO...
 
 1. Install latest Haxe 4
 2. `cd` to project folder
-3. Run `build.hxml` file
+3. Run `build.hxml` file to build only debug version
+4. Run `build-all.hxml` file to build both debug and release versions
