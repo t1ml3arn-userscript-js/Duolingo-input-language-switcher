@@ -7,7 +7,7 @@
 // @description This script allows you to type letters appropriate for current task without changing keyboard's layout
 // @run-at document-start
 // @grant none
-// @icon https://d35aaqx5ub95lt.cloudfront.net/images/duolingo-touch-icon.png
+// @icon https://www.androidpolice.com/wp-content/uploads/2014/03/nexusae0_Duolingo-Thumb.png
 // @license GPLv3
 // @homepageURL https://github.com/T1mL3arn/Duolingo-input-language-switcher
 // @supportURL https://greasyfork.org/en/scripts/37693-duolingo-input-language-switcher/feedback
