@@ -3,6 +3,8 @@ import js.Promise;
 import js.html.*;
 import js.*;
 
+using Reflect;
+
 class Main {
     static function main() {
         new Main();
@@ -89,62 +91,64 @@ class Main {
         document.removeEventListener('DOMContentLoaded', onready);
         var mode = #if debug " [ DEBUG MODE ]" #else "" #end;
         console.log('Duolingo input switcher is ready$mode');
-        
-        Browser.document.body.addEventListener('keypress', onKeyPress);
-        Browser.document.body.addEventListener('keydown', refocus);
+
+        Browser.document.body.addEventListener('keydown', onKeyDown);
     }
-    
-    function onKeyPress(e:KeyboardEvent)
+
+    function onKeyDown(e:KeyboardEvent) 
     {
-        if(e.ctrlKey)
-            return;
-            
-        var sourceElt:Element = cast e.target;
-        if(isInput(sourceElt))
+        // NOTE: e.code always represents the QWERTY keyboard key.
+        // See more https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
+        
+        // if pressed key cannot be switched - do nothing
+        var pressedKeyCodeIndex = this.keyCodes.indexOf(e.code);
+        if(pressedKeyCodeIndex == -1) return;
+
+        var inputElt:InputElement = cast e.target;
+        var challengeType:String = inputElt.dataset.test;
+        
+        // determine language pair, 
+        // i.e language from which to convert to target language
+        switch (challengeType)
         {
-            var challengeType:String = sourceElt.dataset.test;
-            switch (challengeType)
-            {
-                case 'challenge-translate-input':
+            case 'challenge-translate-input':
 
-                    nativeLanguage = 'ru';
-                    foreignLanguage = 'en';
-                    
-                    var lang = sourceElt.getAttribute('lang');
-                    if(lang==nativeLanguage)
-                    {
-                        // trace('Translation to NATIVE input found');
-                        setLanguagePair('ru', 'en');
-                    }
-                    else if (lang==foreignLanguage)
-                    {
-                        // trace('Translation to FOREIGN input found');
-                        setLanguagePair('en', 'ru');
-                    }
-
-                case 'challenge-listen-input', 'challenge-name-input', 'challenge-listentap-input':
-
-                    // trace('Listen or name input found');
+                nativeLanguage = 'ru';
+                foreignLanguage = 'en';
+                
+                var lang = inputElt.getAttribute('lang');
+                if(lang==nativeLanguage)
+                {
+                    // trace('Translation to NATIVE input found');
+                    setLanguagePair('ru', 'en');
+                }
+                else if (lang==foreignLanguage)
+                {
+                    // trace('Translation to FOREIGN input found');
                     setLanguagePair('en', 'ru');
+                }
 
-                case 'challenge-text-input':
+            case 'challenge-listen-input', 'challenge-name-input', 'challenge-listentap-input':
 
-                    setLanguagePair('en', 'ru');
+                // trace('Listen or name input found');
+                setLanguagePair('en', 'ru');
 
-                default:    return;
-            }
-            
-            var targetLangStr:String = untyped languages[targetLanguage];
-            
-            var keyCodeInd = keyCodes.indexOf(untyped e.code);
-            if(keyCodeInd != -1)
-            {
-                // current symbol is in source, need to translate
-                var targetChar = e.shiftKey ? targetLangStr.charAt(keyCodeInd+keyCodes.length) : targetLangStr.charAt(keyCodeInd);
-                var input:Dynamic = sourceElt;
-                Browser.window.setTimeout(replaceChar,1, input,targetChar,input.selectionStart);
-            }
+            case 'challenge-text-input':
+
+                setLanguagePair('en', 'ru');
+
+            default:    
+
+                // event sender is not an element we are looking for
+                return;
         }
+
+        e.preventDefault();
+        
+        var newLetter = getLanguageLetter(targetLanguage, pressedKeyCodeIndex, e.shiftKey);
+        
+        this.replaceLetter(inputElt.selectionStart, newLetter, inputElt);
+        this.callReactOnChange(inputElt);
     }
 
     function isInput(elt:Element):Bool
@@ -158,20 +162,46 @@ class Main {
         this.sourceLanguage = source;
     }
 
-    function refocus(e:KeyboardEvent)
+    function getLanguageLetter(language:String, letterIndex:Int, isUppercase:Bool):String
     {
-        if(isInput(cast e.target))
-        if(e.keyCode==13||untyped e.code == "Enter")
-            untyped e.target.blur();
+        var letters = untyped this.languages[language];
+        
+        if(isUppercase)
+            return letters.charAt(letterIndex + this.keyCodes.length);
+        else
+            return letters.charAt(letterIndex);
     }
 
-    function replaceChar(target:InputElement, newChar:String, position)
+    /**
+     * Replaces at position `index` one letter for `inputElt.value` by
+     * given new `letter`
+     * @param index Position to replace
+     * @param letter New letter
+     * @param inputElt Target input element
+     */
+    function replaceLetter(index:Int, letter:String, inputElt:InputElement)
     {
-        var val = target.value;
-        val = val.substring(0, position)+newChar+val.substr(position+1);
-        target.innerText = val; 
-        target.value = val;
-        target.setSelectionRange(position+1,position+1);
+        var val = inputElt.value;
+        val = val.substring(0, index) + letter + val.substring(index + 1);
+        inputElt.value = val;
+        inputElt.setSelectionRange(index+1, index+1);
+    }
+
+    function callReactOnChange(elt:Element) 
+    {
+        /* 
+        It is needed to force Reach to update state (otherwise nothing will work).
+        To do so we find object with name like `__reactInternalInstance$d64zg30yj9p`
+        and call its `onChange()`. It is usefull to use React Devtools extension ...
+        */
+        for(fieldName in elt.fields())
+        {
+            if(StringTools.contains(fieldName, '__reactEventHandlers'))
+            {
+                var reactHandler:ReactEventHandlers = elt.field(fieldName);
+                reactHandler.onChange({ target: elt});
+            }
+        }
     }
 
     function getUserLanguage():Promise<String>
@@ -191,4 +221,9 @@ class Main {
         // to do ?
         return Promise.resolve('en');
     }
+}
+
+typedef ReactEventHandlers = 
+{
+    function onChange(e:Dynamic):Void;
 }
