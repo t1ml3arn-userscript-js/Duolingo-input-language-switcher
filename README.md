@@ -21,6 +21,4 @@ TODO...
 
 1. Install Haxe 4
 2. `cd` to project folder
-3. Run `build.hxml` file  
-
-Why Haxe? Because I can.
+3. Run `build.hxml` file
