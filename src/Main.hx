@@ -1,7 +1,8 @@
 package;
-import js.Promise;
+import js.lib.Promise;
 import js.html.*;
-import js.*;
+import js.lib.*;
+import js.Browser;
 
 using Reflect;
 
@@ -23,7 +24,7 @@ class Main {
 
     function new()
     {
-        document = js.Browser.document;
+        document = Browser.document;
         console = Browser.console;
 
         #if debug
