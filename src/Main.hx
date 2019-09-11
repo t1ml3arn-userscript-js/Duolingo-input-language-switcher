@@ -16,6 +16,7 @@ class Main {
     var targetLanguage:String;
     var sourceLanguage:String;
     var originalTrace:Dynamic;
+    /** The list of all the valid keycodes which can be automatically switched. */
     var keyCodes:Array<String>;
 
     function new()
