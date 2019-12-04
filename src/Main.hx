@@ -101,6 +101,9 @@ class Main {
         // NOTE: e.code always represents the QWERTY keyboard key.
         // See more https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
         
+        // do nothing if Ctrl key is present
+        if(e.ctrlKey)   return;
+
         // if pressed key cannot be switched - do nothing
         var pressedKeyCodeIndex = this.keyCodes.indexOf(e.code);
         if(pressedKeyCodeIndex == -1) return;
@@ -182,9 +185,11 @@ class Main {
      */
     function replaceLetter(index:Int, letter:String, inputElt:InputElement)
     {
-        var val = inputElt.value;
-        val = val.substring(0, index) + letter + val.substring(index + 1);
-        inputElt.value = val;
+        var phrase = inputElt.value;
+        var prefix = phrase.substring(0, index);
+        var postfix = phrase.substring(index);
+        phrase = prefix + letter + postfix;
+        inputElt.value = phrase;
         inputElt.setSelectionRange(index+1, index+1);
     }
 
