@@ -3,7 +3,7 @@
 // @namespace https://www.duolingo.com/IVrL9
 // @author T1mL3arn
 // @match https://www.duolingo.com/*
-// @version 2.0.1
+// @version 2.0.2
 // @description This script allows you to type letters appropriate for current task without changing keyboard's layout
 // @run-at document-start
 // @grant none
@@ -85,8 +85,7 @@ Main.prototype = {
 			return;
 		}
 		e.preventDefault();
-		var newLetter = this.getLanguageLetter(this.targetLanguage,pressedKeyCodeIndex,e.shiftKey);
-		this.replaceLetter(inputElt.selectionStart,newLetter,inputElt);
+		this.replaceLetter(this.getLanguageLetter(this.targetLanguage,pressedKeyCodeIndex,e.shiftKey),inputElt);
 		this.callReactOnChange(inputElt);
 	}
 	,setLanguagePair: function(target,source) {
@@ -101,11 +100,13 @@ Main.prototype = {
 			return letters.charAt(letterIndex);
 		}
 	}
-	,replaceLetter: function(index,letter,inputElt) {
+	,replaceLetter: function(letter,inputElt) {
+		var start = inputElt.selectionStart;
+		var end = inputElt.selectionEnd;
 		var phrase = inputElt.value;
-		phrase = phrase.substring(0,index) + letter + phrase.substring(index);
+		phrase = phrase.substring(0,start) + letter + phrase.substring(end);
 		inputElt.value = phrase;
-		inputElt.setSelectionRange(index + 1,index + 1);
+		inputElt.setSelectionRange(start + 1,start + 1);
 	}
 	,callReactOnChange: function(elt) {
 		var _g = 0;
