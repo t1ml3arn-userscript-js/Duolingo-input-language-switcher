@@ -3,7 +3,7 @@
 // @namespace https://www.duolingo.com/IVrL9
 // @author T1mL3arn
 // @match https://www.duolingo.com/*
-// @version 2.0.1
+// @version 2.0.2
 // @description This script allows you to type letters appropriate for current task without changing keyboard's layout
 // @run-at document-start
 // @grant none
