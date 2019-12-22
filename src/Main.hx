@@ -151,7 +151,7 @@ class Main {
         
         var newLetter = getLanguageLetter(targetLanguage, pressedKeyCodeIndex, e.shiftKey);
         
-        this.replaceLetter(inputElt.selectionStart, newLetter, inputElt);
+        this.replaceLetter(newLetter, inputElt);
         this.callReactOnChange(inputElt);
     }
 
@@ -177,20 +177,20 @@ class Main {
     }
 
     /**
-     * Replaces at position `index` one letter for `inputElt.value` by
-     * given new `letter`
-     * @param index Position to replace
+     * Replaces selected text with given `letter` for `inputElt.value`
      * @param letter New letter
      * @param inputElt Target input element
      */
-    function replaceLetter(index:Int, letter:String, inputElt:InputElement)
+    function replaceLetter(letter:String, inputElt:InputElement)
     {
+        var start = inputElt.selectionStart;
+        var end = inputElt.selectionEnd;
         var phrase = inputElt.value;
-        var prefix = phrase.substring(0, index);
-        var postfix = phrase.substring(index);
+        var prefix = phrase.substring(0, start);
+        var postfix = phrase.substring(end);
         phrase = prefix + letter + postfix;
         inputElt.value = phrase;
-        inputElt.setSelectionRange(index+1, index+1);
+        inputElt.setSelectionRange(start+1, start+1);
     }
 
     function callReactOnChange(elt:Element) 
