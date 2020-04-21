@@ -196,7 +196,7 @@ class Main {
     function callReactOnChange(elt:Element) 
     {
         /* 
-        It is needed to force Reach to update state (otherwise nothing will work).
+        It is needed to force React to update state (otherwise nothing will work).
         To do so we find object with name like `__reactInternalInstance$d64zg30yj9p`
         and call its `onChange()`. It is usefull to use React Devtools extension ...
         */
