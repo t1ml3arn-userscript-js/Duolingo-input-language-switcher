@@ -3,7 +3,7 @@
 // @namespace https://www.duolingo.com/IVrL9
 // @author T1mL3arn
 // @match https://www.duolingo.com/*
-// @version 2.0.2
+// @version 2.0.3
 // @description This script allows you to type letters appropriate for current task without changing keyboard's layout
 // @run-at document-start
 // @grant none
@@ -131,10 +131,12 @@ Main.prototype = {
 		while(_g < _g1.length) {
 			var fieldName = _g1[_g];
 			++_g;
-			if(fieldName.indexOf("__reactEventHandlers") != -1) {
+			if(fieldName.indexOf("__reactProps") != -1) {
 				Reflect.field(elt,fieldName).onChange({ target : elt});
+				return;
 			}
 		}
+		this.console.log("Cannot find react onCange handler");
 	}
 };
 Math.__name__ = true;
