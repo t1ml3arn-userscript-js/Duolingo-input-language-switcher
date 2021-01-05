@@ -197,15 +197,17 @@ class Main {
     {
         /* 
         It is needed to force React to update state (otherwise nothing will work).
-        To do so we find object with name like `__reactInternalInstance$d64zg30yj9p`
-        and call its `onChange()`. It is usefull to use React Devtools extension ...
+        To do so we find object with name like `__reactProps$d64zg30yj9p`
+        and call its `onChange()`. 
+        
+        NOTE: It is usefull to use React Devtools extension ...
         */
         for(fieldName in elt.fields())
         {
-            if(StringTools.contains(fieldName, '__reactEventHandlers'))
+            if(StringTools.contains(fieldName, '__reactProps'))
             {
-                var reactHandler:ReactEventHandlers = elt.field(fieldName);
-                reactHandler.onChange({ target: elt});
+                var reactProps:ReactProps = elt.field(fieldName);
+                reactProps.onChange({ target: elt});
                 return;
             }
         }
@@ -232,7 +234,7 @@ class Main {
     }
 }
 
-typedef ReactEventHandlers = 
+typedef ReactProps = 
 {
     function onChange(e:Dynamic):Void;
 }
