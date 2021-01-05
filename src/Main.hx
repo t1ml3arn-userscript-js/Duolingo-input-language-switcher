@@ -206,8 +206,11 @@ class Main {
             {
                 var reactHandler:ReactEventHandlers = elt.field(fieldName);
                 reactHandler.onChange({ target: elt});
+                return;
             }
         }
+
+        console.log('Cannot find react onCange handler');
     }
 
     function getUserLanguage():Promise<String>
