@@ -6,21 +6,46 @@ import js.Browser;
 
 using Reflect;
 
+typedef DuoChallenge = 
+{
+    var metadata:DuoChallengeMeta;
+}
+
+typedef DuoChallengeMeta = 
+{
+    var source_language:String;
+    var target_language:String;
+    var type:String;
+    var specific_type:String;
+}
+
 class Main {
     static function main() {
         new Main();
     }
 
+    final CHALLENGE_TYPES = [
+        'listen_complete', 
+        'complete_reverse_translation', 
+        'reverse_translate',
+        'partial_reverse_translate',
+        'reverse_tap',
+        'listen',
+        'tap',
+        'name',
+        'listen_tap',
+    ];
+
     var console:ConsoleInstance;
     var document:js.html.Document;
     var languages:Dynamic;
-    var nativeLanguage:String;
-    var foreignLanguage:String;
     var targetLanguage:String;
     var sourceLanguage:String;
     var originalTrace:Dynamic;
     /** The list of all the valid keycodes which can be automatically switched. */
     var keyCodes:Array<String>;
+    var challenge:DuoChallenge;
+    var currentChallengeType:String;
 
     function new()
     {
@@ -94,76 +119,115 @@ class Main {
         console.log('Duolingo input switcher is ready$mode');
 
         Browser.document.body.addEventListener('keydown', onKeyDown);
+
+        new MutationObserver(cast changes -> {
+            var path = Browser.window.location.pathname;
+            var isPracticePage = StringTools.startsWith(path, '/practice') || StringTools.startsWith(path, '/lesson');
+            var someAdded = Lambda.find(changes, c -> c.addedNodes.length > 0) != null;
+
+            if(isPracticePage && someAdded)
+            {
+                var elt = document.querySelector('._3x0ok');
+                if(elt == null)
+                {
+                    console.log('Not a practice page, reset current challenge');
+                    currentChallengeType = null;
+                    return;
+                }
+
+                var props = getReactProps(elt);
+                // The way to get desired react data was inspired by this
+                // https://greasyfork.org/en/scripts/451185-new-duolingo-cheat-duohacker-works-duolingo-automation/code
+                // script.
+                challenge = untyped props.children[0]._owner.stateNode.props.currentChallenge;
+                if(challenge == null)
+                {
+                    console.log('Not a practice page, reset current challenge');
+                    currentChallengeType = null;
+                    return;
+                }
+
+                var sourcelang = challenge.metadata.source_language;
+                var targetlang = challenge.metadata.target_language;
+                var specType = challenge.metadata.specific_type;
+                var genType = challenge.metadata.type;
+
+                // setLanguagePair(targetlang, sourcelang);
+                this.sourceLanguage = sourcelang;
+                this.targetLanguage = targetlang != null ? targetlang : sourcelang;
+                this.currentChallengeType = specType;
+
+                console.log(specType, sourcelang, targetlang, genType);
+            /*
+                [ ] - have to do
+                [-] - doesnot needed
+                [x] - done
+                [*] - bug
+
+                type source target genericType
+
+                [-] select_transcription en undefined select_transcription
+                [-] listen_isolation undefined undefined listen_isolation
+                [-] listen_match undefined undefined listen_match
+                [-] assist undefined undefined assist
+                [x] listen_complete en undefined listen_complete (listen and complete by typing EN)
+                [x] complete_reverse_translation ru en complete_reverse_translation (translate from RU to EN and type it)
+                [x] reverse_translate ru en translate (translate from RU to EN and type it)
+                [x] partial_reverse_translate ru en partial_reverse_translate (same as above, NEW)
+                [x] reverse_tap ru en translate (same as reverse_translate, words can be selected or typed)
+                [x] listen en undefined listen (listen and type all in EN)
+                [x] name en undefined name (type single word in EN)
+                [x] tap en ru translate
+                [x] listen_tap en undefined listen_tap
+            */
+                // TODO for "reverse_translate" dos not work deletion of 
+                // sevral selected ranges.
+                // This type of input uses <input> or <textarea>.
+                // Do I really care about it?
+            }
+        }).observe(document.body, { childList: true, subtree: true });
     }
 
-    function onKeyDown(e:KeyboardEvent) 
+    function getReactProps(elt:Element):Dynamic
     {
-        // NOTE: e.code always represents the QWERTY keyboard key.
-        // See more https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
-        
+        for(propName in elt.fields())
+        {
+            if(StringTools.startsWith(propName, '__reactProps'))
+                return elt.field(propName);
+        }
+
+        return null;
+    }
+
+    function onKeyDown(e:KeyboardEvent)
+    {
+        if(currentChallengeType == null) return;
+
         // do nothing if Ctrl key is present
         if(e.ctrlKey)   return;
+        
+        // NOTE: e.code always represents the QWERTY keyboard key.
+        // See more https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
 
-        // if pressed key cannot be switched - do nothing
+        // if pressed key cannot be switched - do nothing 
         var pressedKeyCodeIndex = this.keyCodes.indexOf(e.code);
         if(pressedKeyCodeIndex == -1) return;
 
-        var inputElt:InputElement = cast e.target;
-        var challengeType:String = inputElt.dataset.test;
+        // do nothing if the challenge type is not we are looking for
+        if(CHALLENGE_TYPES.indexOf(currentChallengeType) == -1)
+            return;
+
+        var elt:Element = cast e.target;
         
-        // determine language pair, 
-        // i.e language from which to convert to target language
-        switch (challengeType)
-        {
-            case 'challenge-translate-input':
-
-                nativeLanguage = 'ru';
-                foreignLanguage = 'en';
-                
-                var lang = inputElt.getAttribute('lang');
-                if(lang==nativeLanguage)
-                {
-                    // trace('Translation to NATIVE input found');
-                    setLanguagePair('ru', 'en');
-                }
-                else if (lang==foreignLanguage)
-                {
-                    // trace('Translation to FOREIGN input found');
-                    setLanguagePair('en', 'ru');
-                }
-
-            case 'challenge-listen-input', 'challenge-name-input', 'challenge-listentap-input':
-
-                // trace('Listen or name input found');
-                setLanguagePair('en', 'ru');
-
-            case 'challenge-text-input':
-
-                setLanguagePair('en', 'ru');
-
-            default:    
-
-                // event sender is not an element we are looking for
-                return;
-        }
+        // check the target elt is <input> or <span>
+        if(!(elt.hasAttribute('contenteditable') || elt.tagName == 'INPUT' || elt.tagName == 'TEXTAREA'))
+            return;
 
         e.preventDefault();
-        
+
         var newLetter = getLanguageLetter(targetLanguage, pressedKeyCodeIndex, e.shiftKey);
-        
-        this.replaceLetter(newLetter, inputElt);
-        this.callReactOnChange(inputElt);
-    }
 
-    function isInput(elt:Element):Bool
-    {
-        return elt.tagName == 'TEXTAREA' || (elt.tagName == 'INPUT' && elt.getAttribute('type') == 'text');
-    }
-
-    function setLanguagePair(target:String, source:String)
-    {
-        this.targetLanguage = target;
-        this.sourceLanguage = source;
+        replaceLetter(newLetter, cast elt);
     }
 
     function getLanguageLetter(language:String, letterIndex:Int, isUppercase:Bool):String
@@ -179,40 +243,86 @@ class Main {
     /**
      * Replaces selected text with given `letter` for `inputElt.value`
      * @param letter New letter
-     * @param inputElt Target input element
+     * @param elt Target element
      */
-    function replaceLetter(letter:String, inputElt:InputElement)
+    function replaceLetter(letter:String, elt:Element)
     {
-        var start = inputElt.selectionStart;
-        var end = inputElt.selectionEnd;
-        var phrase = inputElt.value;
-        var prefix = phrase.substring(0, start);
-        var postfix = phrase.substring(end);
-        phrase = prefix + letter + postfix;
-        inputElt.value = phrase;
-        inputElt.setSelectionRange(start+1, start+1);
+        switch(elt.tagName)
+        {
+            case 'SPAN':
+                
+                var s = Browser.window.getSelection();
+                if (s.anchorNode != s.focusNode)    return false;
+
+                var start = s.anchorOffset;
+                var end = s.focusOffset;
+                var text = s.anchorNode.textContent;
+
+                // if there is selection - delete selected text
+                if(start != end)    s.deleteFromDocument();
+
+                // duno if it gets updated after deleting, so read them again to be sure
+                start = s.anchorOffset;
+                end = s.focusOffset;
+
+                // make the new text
+                var newText = text.substring(0, start) + letter + text.substring(end);
+                elt.textContent = newText;
+
+                // NOTE with help of https://stackoverflow.com/questions/33658630/how-to-select-text-range-within-a-contenteditable-div-that-has-no-child-nodes
+                // I figured it out!
+
+                // tell React text was updated
+                elt.dispatchEvent(new InputEvent('input', { bubbles: true }));
+
+                s.collapse(elt.childNodes[0], start+1);
+
+                return true;
+
+            case 'INPUT', 'TEXTAREA':
+
+                var elt:InputElement = cast elt;
+                var start = elt.selectionStart;
+                var end = elt.selectionEnd;
+                var phrase = elt.value;
+                var prefix = phrase.substring(0, start);
+                var postfix = phrase.substring(end);
+                phrase = prefix + letter + postfix;
+                elt.value = phrase;
+                elt.setSelectionRange(start+1, start+1);
+
+                // somehow triggering change event does not work as with span
+                // elt.dispatchEvent(new Event('change', { bubbles: true }));
+                
+                callReactEventHandler(elt, 'onChange', { type: 'change', target: elt });
+                // duolingo onChange handler code: onChange:e=>i(e,e.target.value)
+
+                return true;
+
+            default:    
+                return false;
+        }
     }
 
-    function callReactOnChange(elt:Element) 
+    function callReactEventHandler(elt:Element, methodName:String, event:Dynamic)
     {
         /* 
         It is needed to force React to update state (otherwise nothing will work).
-        To do so we find object with name like `__reactProps$d64zg30yj9p`
-        and call its `onChange()`. 
-        
-        NOTE: It is usefull to use React Devtools extension ...
+        To do it we find object with name like `__reactProps$d64zg30yj9p`
+        and call its `onChange()`.
         */
+
         for(fieldName in elt.fields())
         {
             if(StringTools.contains(fieldName, '__reactProps'))
             {
-                var reactProps:ReactProps = elt.field(fieldName);
-                reactProps.onChange({ target: elt});
+                var reactProps = elt.field(fieldName);
+                reactProps[untyped methodName](event);
                 return;
             }
         }
 
-        console.log('Cannot find react onCange handler');
+        console.error('Cannot find react $methodName handler on', elt);
     }
 
     function getUserLanguage():Promise<String>
@@ -226,15 +336,4 @@ class Main {
         // to do ?
         return Promise.resolve('ru');
     }
-
-    function getForeignLanguage():Promise<String>
-    {
-        // to do ?
-        return Promise.resolve('en');
-    }
-}
-
-typedef ReactProps = 
-{
-    function onChange(e:Dynamic):Void;
 }
