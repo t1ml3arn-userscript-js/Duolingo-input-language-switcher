@@ -3,7 +3,8 @@
 // @namespace https://www.duolingo.com/IVrL9
 // @author T1mL3arn
 // @match https://www.duolingo.com/*
-// @version 3.0.0
+// @match https://*.duolingo.com/*
+// @version 3.0.1
 // @description This script allows you to type letters appropriate for current challenge without changing keyboard layout. Similar to Punto Switcher.
 // @description:ru Скрипт дает возможность выполнять упражнения не отвлекаясь на переключение раскладки клавиатуры. Похоже на Punto Switcher.
 // @run-at document-start
